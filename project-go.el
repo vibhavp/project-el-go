@@ -64,11 +64,11 @@
 
 (defvar project-go-go-path "go")
 (defvar project-go--files-include-type '(:GoFiles :CgoFiles :CFiles :CXXFiles
-						  :MFiles :HFiles :FFiles
-						  :SFiles :SwigFiles :SwigCXXFiles
-						  :TestGoFiles :XTestGoFiles
-						  :EmbedFiles :TestEmbedFiles
-						  :XTestEmbedFiles))
+                                                  :MFiles :HFiles :FFiles
+                                                  :SFiles :SwigFiles :SwigCXXFiles
+                                                  :TestGoFiles :XTestGoFiles
+                                                  :EmbedFiles :TestEmbedFiles
+                                                  :XTestEmbedFiles))
 (defvar project-go--files-ignored-type '(:IgnoredGoFiles :IgnoredOtherFiles))
 
 (cl-defstruct project-go--project
@@ -88,10 +88,10 @@
     (inline-quote
      (map-let (:Path :Main :Dir :GoMod :GoVersion) ,json
        (make-project-go--module :path Path
-				:main Main
-				:dir Dir
-				:go-mod GoMod
-				:go-version GoVersion)))))
+                                :main Main
+                                :dir Dir
+                                :go-mod GoMod
+                                :go-version GoVersion)))))
 
 ;;;###autoload
 (defun project-go-try-go (dir)
@@ -99,25 +99,25 @@
 Returns a `project-go--project' type if successful, else nil."
   (with-temp-buffer
     (if (zerop (call-process "go" nil (current-buffer) t
-			     "list" "-m" "-json"))
-	(progn
-	  (goto-char (point-min))
-	  (let ((main-modules nil)
-		(modules nil))
-	    (while (not (eq (point) (1- (point-max))))
-	      (let ((module (project-go--json-to-module
-			     (json-parse-buffer :object-type 'plist :array-type 'list))))
-		(unless (string= (project-go--module-path module) "command-line-arguments")
-		  (if (project-go--module-main module)
-		      (push module main-modules)
-		    (push module modules)))))
-	    (if (and (null main-modules) (null modules))
-		nil
-	      (setq modules (nreverse modules)
-		    main-modules (nreverse main-modules))
-	      (make-project-go--project :root (seq-first main-modules)
-					:main-modules main-modules
-					:modules modules))))
+                             "list" "-m" "-json"))
+        (progn
+          (goto-char (point-min))
+          (let ((main-modules nil)
+                (modules nil))
+            (while (not (eq (point) (1- (point-max))))
+              (let ((module (project-go--json-to-module
+                             (json-parse-buffer :object-type 'plist :array-type 'list))))
+                (unless (string= (project-go--module-path module) "command-line-arguments")
+                  (if (project-go--module-main module)
+                      (push module main-modules)
+                    (push module modules)))))
+            (if (and (null main-modules) (null modules))
+                nil
+              (setq modules (nreverse modules)
+                    main-modules (nreverse main-modules))
+              (make-project-go--project :root (seq-first main-modules)
+                                        :main-modules main-modules
+                                        :modules modules))))
       nil)))
 
 
@@ -125,26 +125,26 @@ Returns a `project-go--project' type if successful, else nil."
   (with-temp-buffer
     (let ((root (project-go--module-path (project-go--project-root project))))
       (apply #'call-process "go" nil (current-buffer) t "list" "-json"
-	     (seq-map (lambda (dir) (concat dir "/...")) dirs))
+             (seq-map (lambda (dir) (concat dir "/...")) dirs))
       (goto-char (point-min))
       (let ((final-files nil))
-	(while (not (eq (point) (1- (point-max))))
-	  (pcase-let* ((json (json-parse-buffer :object-type 'plist :array-type 'list))
-		       (map ((:Dir package-dir)) json)
-		       (files-list nil))
-	    (seq-do (lambda (property)
-		      (if-let* ((files (plist-get json property)))
-			  (setq files-list
-				(seq-concatenate 'list files-list
-						 (seq-map (lambda (file)
-							    (expand-file-name file package-dir))
-							  files)))))
-		    props)
-	    (setq final-files
-		  (if (null final-files)
-		      files-list
-		    (seq-concatenate 'list final-files files-list)))))
-	final-files))))
+        (while (not (eq (point) (1- (point-max))))
+          (pcase-let* ((json (json-parse-buffer :object-type 'plist :array-type 'list))
+                       (map ((:Dir package-dir)) json)
+                       (files-list nil))
+            (seq-do (lambda (property)
+                      (if-let* ((files (plist-get json property)))
+                          (setq files-list
+                                (seq-concatenate 'list files-list
+                                                 (seq-map (lambda (file)
+                                                            (expand-file-name file package-dir))
+                                                          files)))))
+                    props)
+            (setq final-files
+                  (if (null final-files)
+                      files-list
+                    (seq-concatenate 'list final-files files-list)))))
+        final-files))))
 
 (cl-defmethod project-files ((project project-go--project) &optional dirs)
   (project-go--get-files project dirs project-go--files-include-type))
@@ -155,17 +155,17 @@ Returns a `project-go--project' type if successful, else nil."
 (cl-defmethod project-external-roots ((project project-go--project))
   (with-temp-buffer
     (let* ((root-project (project-go--project-root project))
-	   (root-dir (project-go--module-dir root-project))
-	   (default-directory root-dir)
-	   (external-roots nil))
+           (root-dir (project-go--module-dir root-project))
+           (default-directory root-dir)
+           (external-roots nil))
       (call-process "go" nil (current-buffer) t "list" "-json" "-m" "all")
       (goto-char (point-min))
       (while (not (eq (point) (1- (point-max))))
-	(pcase-let* ((json (json-parse-buffer :object-type 'plist :array-type 'list))
-		     ((map :Dir :Main) json))
-	  (unless (or Main
-		      (null Dir))
-	    (push Dir external-roots))))
+        (pcase-let* ((json (json-parse-buffer :object-type 'plist :array-type 'list))
+                     ((map :Dir :Main) json))
+          (unless (or Main
+                      (null Dir))
+            (push Dir external-roots))))
       (nreverse external-roots))))
 
 (cl-defmethod project-root ((project project-go--project))
