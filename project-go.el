@@ -4,7 +4,7 @@
 
 ;; Author: Vibhav Pant <vibhavp@gmail.com>
 ;; URL: https://github.com/vibhavp/project-el-go
-;; Package-Requires: ((emacs "28.1"))
+;; Package-Requires: ((project "0.8.1") (emacs "27.1"))
 ;; Version: 0.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -122,6 +122,7 @@ Returns a `project-go--project' type if successful, else nil."
 
 
 (defun project-go--get-files (project dirs props)
+  "Return a list of files in PROJECT, under directory DIRS, using fields in PROPS."
   (with-temp-buffer
     (let ((root (project-go--module-path (project-go--project-root project))))
       (apply #'call-process "go" nil (current-buffer) t "list" "-json"
