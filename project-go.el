@@ -204,10 +204,10 @@ Returns a `project-go--project' type if successful, else nil."
   (interactive)
   (shell-command "go mod verify"))
 
-(defun go-work-init()
+(defun go-work-init(dir)
   "go work init"
-  (interactive)
-  (shell-command "go work init"))
+  (interactive "DInitialize go workspace at: ")
+  (shell-command (concat "go work init" dir)))
 
 (defun go-work-use(dir)
   "go work use"
