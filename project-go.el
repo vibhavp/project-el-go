@@ -172,5 +172,42 @@ Returns a `project-go--project' type if successful, else nil."
 (cl-defmethod project-root ((project project-go--project))
   (project-go--module-dir (project-go--project-root project)))
 
+;;; Some additional utility functions to help make things go smoother
+
+(defun go-mod-init()
+  "go mod init"
+  (interactive)
+  (shell-command "go mod init"))
+
+(defun go-mod-tidy()
+  "go mod tidy"
+  (interactive)
+  (shell-command "go-mod-tidy"))
+
+(defun go-mod-graph()
+  "go mod graph"
+  (interactive)
+  (shell-command "go mod graph"))
+
+(defun go-mod-verify()
+  "go mod verify"
+  (interactive)
+  (shell-command "go mod verify"))
+
+(defun go-work-init()
+  "go work init"
+  (interactive)
+  (shell-command "go work init"))
+
+(defun go-work-use(dir)
+  "go work use"
+  (interactive "DUse the following directory in your go workspace: " )
+  (message (concat "go work use " dir)))
+
+(defun go-work-sync()
+  "go work sync"
+  (interactive)
+  (shell-command "go work sync"))
+
 (provide 'project-go)
 ;;; project-go.el ends here
