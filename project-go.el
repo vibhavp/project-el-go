@@ -202,7 +202,7 @@ Returns a `project-go--project' type if successful, else nil."
 (defun go-work-use(dir)
   "go work use"
   (interactive "DUse the following directory in your go workspace: " )
-  (message (concat "go work use " dir)))
+  (shell-command (concat "go work use " dir)))
 
 (defun go-work-sync()
   "go work sync"
