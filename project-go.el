@@ -172,5 +172,52 @@ Returns a `project-go--project' type if successful, else nil."
 (cl-defmethod project-root ((project project-go--project))
   (project-go--module-dir (project-go--project-root project)))
 
+;;; Some additional utility functions to help make things go smoother
+
+(defun go-get(modulenamever)
+  "go get xxx@version"
+  (interactive "sModule: ")
+  (shell-command (concat "go get " modulenamever)))
+
+(defun go-install(modulenamever)
+  "go insall xxx@version"
+  (interactive "sModule: ")
+  (shell-command (concat "go install " modulenamever)))
+
+(defun go-mod-init(modulename)
+  "go mod init"
+  (interactive (list (read-string "Module name: " "main")))
+  (shell-command (concat "go mod init " modulename)))
+
+(defun go-mod-tidy()
+  "go mod tidy"
+  (interactive)
+  (shell-command "go mod tidy"))
+
+(defun go-mod-graph()
+  "go mod graph"
+  (interactive)
+  (shell-command "go mod graph"))
+
+(defun go-mod-verify()
+  "go mod verify"
+  (interactive)
+  (shell-command "go mod verify"))
+
+(defun go-work-init(dir)
+  "go work init"
+  (interactive "DInitialize go workspace at: ")
+  (shell-command (concat "go work init" dir)))
+
+(defun go-work-use(dir)
+  "go work use"
+  (interactive "DUse the following directory in your go workspace: " )
+  (shell-command (concat "go work use " dir)))
+
+(defun go-work-sync()
+  "go work sync"
+  (interactive)
+  (shell-command "go work sync"))
+
 (provide 'project-go)
 ;;; project-go.el ends here
