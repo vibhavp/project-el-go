@@ -174,15 +174,25 @@ Returns a `project-go--project' type if successful, else nil."
 
 ;;; Some additional utility functions to help make things go smoother
 
-(defun go-mod-init()
+(defun go-get(modulenamever)
+  "go get xxx@version"
+  (interactive "sModule: ")
+  (shell-command (concat "go get " modulenamever)))
+
+(defun go-install(modulenamever)
+  "go insall xxx@version"
+  (interactive "sModule: ")
+  (shell-command (concat "go install " modulenamever)))
+
+(defun go-mod-init(modulename)
   "go mod init"
-  (interactive)
-  (shell-command "go mod init"))
+  (interactive (list (read-string "Module name: " "main")))
+  (shell-command (concat "go mod init " modulename)))
 
 (defun go-mod-tidy()
   "go mod tidy"
   (interactive)
-  (shell-command "go-mod-tidy"))
+  (shell-command "go mod tidy"))
 
 (defun go-mod-graph()
   "go mod graph"
